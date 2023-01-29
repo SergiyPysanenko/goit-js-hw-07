@@ -12,7 +12,6 @@ const imageGalleryMarkup = galleryItems.map(item => `
 `).join('');
 
 galleryImagesContainer.innerHTML = imageGalleryMarkup;
-
 galleryImagesContainer.addEventListener('click', onClickGalleryImage);
 
 function onClickGalleryImage(evt) {
