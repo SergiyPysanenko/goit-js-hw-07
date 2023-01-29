@@ -1,41 +1,39 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-console.log(galleryItems);
+const galleryRef = document.querySelector('.gallery');
 
-const galleryContainerEl = document.querySelector(".gallery");
-const imagesMarkup = createItemsMarkup(galleryItems);
-galleryContainerEl.insertAdjacentHTML("beforeend", imagesMarkup);
+galleryRef.innerHTML = galleryItems
+  .map(({preview, original, description}) => {
+    return `
+    <li class = "gallery__item">
+    <a class = "gallery__link" href= "${original}">
+    <img  
+    class = "gallery__image" 
+    data-source = "${original}" 
+    src = ${preview} 
+    alt = "${description}">
+    </a>
+    </li>
+    `;
+  })
+  .join('');
 
-function createItemsMarkup(item) {
-    return galleryItems.map(({ preview, original, description }) => {
-        return `<div class="gallery__item">
-        <a class="gallery__link" href="${preview}">
-          <img
-            class="gallery__image"
-            src="${preview}"
-            data-source="${original}"
-            alt="${description}"
-          />
-        </a>
-      </div>`;
-      })
-      .join("");
-  }
+galleryRef.addEventListener("click", openModalGallery);
 
-const onContainerClick = (e) => {
-    e.preventDefault();
-  
-    if (e.target.classList.contains("gallery")) return;
-    const source = e.target.dataset.source;
-    const instance = basicLightbox.create(`
-      <img src="${source}"width="800" height="600">`);
-  
+function openModalGallery(event) {
+    event.preventDefault();
+    if (event.target.nodeName !== "IMG") return;
+    
+    const instance = basicLightbox.create(`<img src="${event.target.dataset.source}" width="1280" height="auto">`, {
+        onShow: () => window.addEventListener("keydown", onEsc),
+        onClose: () => window.removeEventListener("keydown", onEsc)
+    });
+        
+        function onEsc(event) {
+            if (event.code === "Escape") {
+                instance.close();
+              }
+          }
     instance.show();
-  };
-  
-galleryContainerEl.addEventListener("click", onContainerClick);
-
-// input.addEventListener('keydown', Escape) =>
-
-// console.log (Escape);
+  }
